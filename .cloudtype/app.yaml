@@ -1,1 +1,10 @@
 
+name: loyola-cataloging-pjt
+app: node@22
+options:
+  env:
+    - name: NODE_ENV
+      value: production
+  install: npm ci --production
+  ports: 3000
+  start: node main.js
