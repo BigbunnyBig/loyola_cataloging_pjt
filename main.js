@@ -9,10 +9,10 @@ const PORT = 3000; // API 서버 포트 설정
 // DB 접속 정보 (Provided by user)
 const pool = new Pool({
     user: 'root',
-    host: 'svc.sel3.cloudtype.app',
+    host: 'svc.sel3.cloudtype.app', 
     database: 'database',
     password: '7487',
-    port: 32752,
+    port: 31375,
     ssl: false // User specified ssl: false
 });
 
@@ -336,3 +336,4 @@ app.get('/api/catalog/stats', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
