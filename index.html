@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyola Cataloging System - 로그인</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f4f7f9; }
+        .container { display: flex; flex-direction: column; gap: 30px; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); width: 350px; }
+        h1 { text-align: center; color: #1e3a8a; margin-bottom: 20px; font-weight: 700; }
+        .section { background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; }
+        .section h2 { margin-top: 0; font-size: 1.25rem; color: #374151; }
+        button, .link-button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.3s; width: 100%; text-align: center; text-decoration: none; display: block;}
+        .guest-button { background-color: #3b82f6; color: white; }
+        .guest-button:hover { background-color: #2563eb; }
+        .admin-section { display: flex; flex-direction: column; gap: 15px; }
+        .password-group { position: relative; }
+        .password-group input { width: 100%; padding: 12px 40px 12px 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280; font-size: 0.9rem; }
+        .admin-button { background-color: #10b981; color: white; }
+        .admin-button:hover { background-color: #059669; }
+        .message-box { padding: 10px; background-color: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; margin-top: 10px; text-align: center; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>로욜라 정리실 일일 통계</h1>
+
+        <!-- Guest 계정 -->
+        <div class="section">
+            <h2>Guest 계정 (작업 등록)</h2>
+            <p style="font-size: 0.9rem; color: #6b7280;">* 비밀번호 불필요</p>
+            <a href="catalog_guest.html?user=guest" class="link-button guest-button">Guest로 접속</a>
+        </div>
+
+        <!-- Admin 계정 -->
+        <div class="section admin-section">
+            <h2>Admin 계정 (시스템 관리 및 통계)</h2>
+            <div class="password-group">
+                <input type="password" id="adminPassword" placeholder="비밀번호를 입력하세요" required>
+                <span class="toggle-password" id="togglePassword">보기</span>
+            </div>
+            <div id="errorMessage" class="message-box"></div>
+            <button class="admin-button" id="adminLoginButton">Admin으로 접속</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://port-0-loyola-cataloging-mgjcfozn458e95b8.sel3.cloudtype.app/api/admin/login'; // Web Server URL
+
+        const passwordInput = document.getElementById('adminPassword');
+        const loginButton = document.getElementById('adminLoginButton');
+        const togglePassword = document.getElementById('togglePassword');
+        const errorMessage = document.getElementById('errorMessage');
+        const ADMIN_PASS = 'adminloyola';
+
+        // 4-5-2) 비밀번호 보기/숨기기 기능
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.textContent = type === 'password' ? '보기' : '숨기기';
+        });
+
+        // 로그인 처리 함수
+        const handleLogin = async () => {
+            const password = passwordInput.value;
+            
+            // 4-5-2) 비밀번호 체크 (클라이언트 측 임시 체크, 서버 API 호출)
+            if (password !== ADMIN_PASS) {
+                errorMessage.textContent = '비밀번호가 일치하지 않습니다.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                // 실제 서버 API를 통해 인증 (보안을 위해 실제 환경에서는 서버 호출이 필요함)
+                // 현재는 비밀번호를 클라이언트에서 처리하지만, 구조를 위해 API 호출 방식을 유지
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    errorMessage.style.display = 'none';
+                    // 4-5-2) Admin 계정 선택 → catalog_admin.html
+                    window.location.href = 'catalog_admin.html?user=admin';
+                } else {
+                    errorMessage.textContent = result.message || '로그인에 실패했습니다.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = '서버 접속에 실패했습니다. (Error: ' + error.message + ')';
+                errorMessage.style.display = 'block';
+            }
+        };
+
+        // 4-5-2) Admin 접속 버튼 클릭
+        loginButton.addEventListener('click', handleLogin);
+
+        // 4-5-2) Enter 시 접속
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+    </script>
+</body>
+</html>

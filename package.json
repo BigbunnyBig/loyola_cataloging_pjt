@@ -1,0 +1,27 @@
+{
+  "name": "workplace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mailtody/loyola-cataloging.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mailtody/loyola-cataloging/issues"
+  },
+  "homepage": "https://github.com/mailtody/loyola-cataloging#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "moment-timezone": "^0.6.0",
+    "path": "^0.12.7",
+    "pg": "^8.16.3"
+  }
+}
