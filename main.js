@@ -36,7 +36,7 @@ function getKstDate(date = new Date()) {
 
 /**
  * 기간 문자열에 따른 KST 기준 시작일과 종료일 범위를 계산합니다.
- * @param {string} period - '금주', '전주', '금월', '전월', '금년', '전년', '3일전'
+ * @param {string} period - '금일', ' 전일', '금주', '전주', '금월', '전월', '금년', '전년', '3일전'
  * @returns {{startDate: string, endDate: string, displayStart: string, displayEnd: string}} SQL 및 표시용 날짜 문자열
  */
 function getDateRange(period) {
@@ -46,6 +46,15 @@ function getDateRange(period) {
     end.setHours(23, 59, 59, 999);
 
     switch (period) {
+        case '금일': // Current Day (00:00:00 to 23:59:59.999)
+            start.setHours(0, 0, 0, 0);
+            break;
+        case '전일': // Last Day
+            start.setDate(today.getDate() - 1);
+            end.setDate(today.getDate() - 1);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
+            break;        
         case '금주': // Current Week (Mon to Sun)
             start.setDate(today.getDate() - (today.getDay() === 0 ? 6 : today.getDay() - 1));
             start.setHours(0, 0, 0, 0);
