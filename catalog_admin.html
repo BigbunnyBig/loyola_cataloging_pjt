@@ -64,6 +64,22 @@
         #messageBox { padding: 10px; margin-top: 15px; border-radius: 6px; text-align: center; display: none; }
         .success { background-color: #d1fae5; color: #065f46; }
         .error { background-color: #fee2e2; color: #991b1b; }
+
+        /* catalog_admin.html 파일의 <style> 태그 내에 추가 */
+        .data-table td[data-col="worker"] {
+        /* 너비 제한: 테이블 전체 너비에 맞춰 적절한 값 설정 */
+        max-width: 120px; /* 예시: 120px로 제한 */
+        
+        /* 텍스트가 넘칠 때 숨김 */
+        overflow: hidden;
+        
+        /* 텍스트를 한 줄로 유지 */
+        white-space: nowrap;
+        
+        /* 넘치는 텍스트를 줄임표(...)로 표시 */
+        text-overflow: ellipsis;
+        }        
+        
     </style>
 </head>
 <body>
@@ -341,7 +357,7 @@
                     <td><input type="radio" name="selectRow" value="${item.id}" onchange="handleRowSelection(this)"></td>
                     <td>${item.id}</td>
                     <td data-col="region">${item.region}</td>
-                    <td data-col="worker">${item.worker}</td>
+                    <<td data-col="worker" title="${item.worker}">${item.worker}</td>
                     <td data-col="w_date">${w_date_display}</td>
                     <td data-col="new_species">${item.new_species}</td>
                     <td data-col="new_bookcount">${item.new_bookcount}</td>
