@@ -1,536 +1,534 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>정리실 일일 통계 시스템 (관리자)</title>
-        <style>
-        body { font-family: 'Inter', sans-serif; padding: 20px; background-color: #f4f7f9; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }
-        h1 { color: #1e3a8a; text-align: center; margin-bottom: 30px; }
-        h2 { color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; margin-top: 30px; }
-        
-        /* Table Styling */
-        .data-table, .input-table, .stats-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        .data-table th, .data-table td, .input-table th, .input-table td, .stats-table th, .stats-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: center; }
-        .data-table th, .input-table th, .stats-table th { background-color: #eff6ff; color: #1e3a8a; font-weight: 600; }
-        .data-table tr:nth-child(even) { background-color: #f9fafb; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정리실 일일 통계 시스템 (관리자)</title>
+    <!-- CSS is copied from catalog_guest.html for consistency and applied here -->
+    <style>
+        body { font-family: 'Inter', sans-serif; padding: 20px; background-color: #f4f7f9; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }
+        h1 { color: #1e3a8a; text-align: center; margin-bottom: 30px; }
+        h2 { color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; margin-top: 30px; }
+        
+        /* Table Styling */
+        .data-table, .input-table, .stats-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
+        .data-table th, .data-table td, .input-table th, .input-table td, .stats-table th, .stats-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: center; }
+        .data-table th, .input-table th, .stats-table th { background-color: #eff6ff; color: #1e3a8a; font-weight: 600; }
+        .data-table tr:nth-child(even) { background-color: #f9fafb; }
 
-        /* Form/Input Styling */
-        /* 입력창 너비 100%로 변경 */
-        .input-table input[type="text"], .input-table input[type="date"], .input-table select { 
-            width: 100%; 
-            padding: 6px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-        }
-         /* 구분(첫 번째) 열 너비 확장 */
-        .input-table th:nth-child(1), .input-table td:nth-child(1) {
-            width: 10%; 
-        }
-        
-        /* Button Styling */
-        .action-buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
-        .action-buttons button, #insertButton, #homeButton, .query-button, #downloadButton { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background-color 0.3s; }
-        #insertButton { background-color: #10b981; color: white; width: 100%; margin-top: 15px; }
-        #insertButton:hover { background-color: #059669; }
-        #homeButton { background-color: #6b7280; color: white; width: 100px; margin-top: 20px;}
-        #homeButton:hover { background-color: #4b5563; }
-        .edit-buttons button { background-color: #f97316; color: white; }
-        .edit-buttons button:hover { background-color: #ea580c; }
-        .delete-buttons button { background-color: #ef4444; color: white; }
-        .delete-buttons button:hover { background-color: #dc2626; }
-        .complete-buttons button { background-color: #2563eb; color: white; }
-        .query-button { background-color: #3b82f6; color: white; }
-        #downloadButton { background-color: #8f04ec; color: white; }
-
-        /* Query Section */
-        .query-options { display: flex; gap: 20px; align-items: center; background: #f0f4f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .query-options label { font-weight: 600; color: #374151; }
-        .query-options select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
-        
-        /* ⭐ 횡 스크롤을 위한 래퍼 클래스 추가 */
-        .table-scroll-wrapper { 
-            overflow-x: auto; /* 핵심: 내용이 넘칠 때 X축 스크롤 활성화 */
-            margin-top: 10px; 
+        /* Form/Input Styling */
+        /* 입력창 너비 100%로 변경 */
+        .input-table input[type="text"], .input-table input[type="date"], .input-table select { 
+            width: 100%; 
+            padding: 6px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
         }
+         /* 구분(첫 번째) 열 너비 확장 */
+        .input-table th:nth-child(1), .input-table td:nth-child(1) {
+            width: 10%; 
+        }
+        
+        /* Button Styling */
+        .action-buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        .action-buttons button, #insertButton, #homeButton, .query-button, #downloadButton { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background-color 0.3s; }
+        #insertButton { background-color: #10b981; color: white; width: 100%; margin-top: 15px; }
+        #insertButton:hover { background-color: #059669; }
+        #homeButton { background-color: #6b7280; color: white; width: 100px; margin-top: 20px;}
+        #homeButton:hover { background-color: #4b5563; }
+        .edit-buttons button { background-color: #f97316; color: white; }
+        .edit-buttons button:hover { background-color: #ea580c; }
+        .delete-buttons button { background-color: #ef4444; color: white; }
+        .delete-buttons button:hover { background-color: #dc2626; }
+        .complete-buttons button { background-color: #2563eb; color: white; }
+        .query-button { background-color: #3b82f6; color: white; }
+        #downloadButton { background-color: #8f04ec; color: white; }
 
-        /* Stats Table */
-        .stats-table th { width: 10%; }
-        .stats-table td { font-weight: 700; color: #047857; background-color: #ecfdf5; }
-        
-        /* Pagination */
-        .pagination { margin-top: 15px; text-align: center; }
-        .pagination button { margin: 0 5px; padding: 8px 12px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; }
-        .pagination button.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        /* Query Section */
+        .query-options { display: flex; gap: 20px; align-items: center; background: #f0f4f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .query-options label { font-weight: 600; color: #374151; }
+        .query-options select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+        
+        /* Stats Table */
+        .stats-table th { width: 10%; }
+        .stats-table td { font-weight: 700; color: #047857; background-color: #ecfdf5; }
+        
+        /* Pagination */
+        .pagination { margin-top: 15px; text-align: center; }
+        .pagination button { margin: 0 5px; padding: 8px 12px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; }
+        .pagination button.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
 
-        /* Messages */
-        #messageBox { padding: 10px; margin-top: 15px; border-radius: 6px; text-align: center; display: none; }
-        .success { background-color: #d1fae5; color: #065f46; }
-        .error { background-color: #fee2e2; color: #991b1b; }
-    </style>
+        /* Messages */
+        #messageBox { padding: 10px; margin-top: 15px; border-radius: 6px; text-align: center; display: none; }
+        .success { background-color: #d1fae5; color: #065f46; }
+        .error { background-color: #fee2e2; color: #991b1b; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>정리실 일일 통계 시스템 (관리자)</h1>
-        <button id="homeButton">HOME</button>
-        <div id="messageBox"></div>
+    <div class="container">
+        <h1>정리실 일일 통계 시스템 (관리자)</h1>
+        <button id="homeButton">HOME</button>
+        <div id="messageBox"></div>
 
-                <h2>통계 및 데이터 관리</h2>
-        <div class="query-options">
-            <label for="query_period">기간:</label>
-            <select id="query_period">
-                <option value="금일" selected>금일</option>
-                <option value="전일">전일</option>
-                <option value="금주">금주</option>                                
-                <option value="전주">전주</option>
-                <option value="금월">금월</option>
-                <option value="전월">전월</option>
-                <option value="금년">금년</option>
-                <option value="전년">전년</option>
-            </select>
-            
-            <label for="query_region">구분:</label>
-            <select id="query_region">
-                <option value="국내외 합산" selected>국내외 합산</option>
-                <option value="국내">국내</option>
-                <option value="국외">국외</option>
-            </select>
-            <button id="queryButton" class="query-button">조회</button>
-            <button id="downloadButton">Raw Data Download (UTF-8)</button>
-        </div>
-
-                <h3 id="statsTitle">조회 기간: (yyyy/mm/dd ~ yyyy/mm/dd)</h3>
-        <table class="stats-table">
-            <thead>
-                <tr>
-                    <th>신규 종수</th>
-                    <th>신규 책수</th>
-                    <th>재정리 종수</th>
-                    <th>재정리 책수</th>
-                    <th>다권본 종수</th>
-                    <th>다권본 책수</th>
-                    <th>교열 책수</th>
-                    <th>전거 수</th>
-                </tr>
-            </thead>
-            <tbody id="statsTableBody">
-                <tr>
-                    <td id="stat_new_species">0</td>
-                    <td id="stat_new_bookcount">0</td>
-                    <td id="stat_rearray_species">0</td>
-                    <td id="stat_rearray_bookcount">0</td>
-                    <td id="stat_multipart_species">0</td>
-                    <td id="stat_multipart_bookcount">0</td>
-                    <td id="stat_edit_bookcount">0</td>
-                    <td id="stat_authority_bookcount">0</td>
-                </tr>
-            </tbody>
-        </table>
-
-                <h2>신규 등록 (관리자)</h2>
-        <table class="input-table">
-            <thead>
-                <tr>
-                    <th>구분</th>                     <th>작업자</th>
-                    <th>작업일시</th>
-                    <th>신규 종수</th>
-                    <th>신규 책수</th>
-                    <th>재정리 종수</th>
-                    <th>재정리 책수</th>
-                    <th>다권본 종수</th>
-                    <th>다권본 책수</th>
-                    <th>교열 책수</th>
-                    <th>전거 수</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><select id="input_region"><option value="국내">국내</option><option value="국외">국외</option></select></td>
-                    <td><input type="text" id="input_worker" value="로욜라"></td>
-                    <td><input type="date" id="input_w_date"></td>
-                    <td><input type="text" id="input_new_species" value="0"></td>
-                    <td><input type="text" id="input_new_bookcount" value="0"></td>
-                    <td><input type="text" id="input_rearray_species" value="0"></td>
-                    <td><input type="text" id="input_rearray_bookcount" value="0"></td>
-                    <td><input type="text" id="input_multipart_species" value="0"></td>
-                    <td><input type="text" id="input_multipart_bookcount" value="0"></td>
-                    <td><input type="text" id="input_edit_bookcount" value="0"></td>
-                    <td><input type="text" id="input_authority_bookcount" value="0"></td>
-                </tr>
-            </tbody>
-        </table>
-        <button id="insertButton">등록</button>
-
-                <h2 style="margin-top: 50px;">작업 내용 조회 및 수정/삭제 (관리자)</h2>
-        <div class="action-buttons">
-            <button id="editStartButton" class="edit-buttons" disabled>수정</button>
-            <button id="deleteButton" class="delete-buttons" disabled>삭제</button>
-        </div>
-        
-        <div class="table-scroll-wrapper">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>선택</th>
-                        <th>ID</th>
-                        <th>구분</th>
-                        <th>작업자</th>
-                        <th>작업일시</th>
-                        <th>신규 종수</th>
-                        <th>신규 책수</th>
-                        <th>재정리 종수</th>
-                        <th>재정리 책수</th>
-                        <th>다권본 종수</th>
-                        <th>다권본 책수</th>
-                        <th>교열 책수</th>
-                        <th>전거 수</th>
-                        <th>수정 계정</th>
-                    </tr>
-                </thead>
-                <tbody id="dataTableBody">
-                                    </tbody>
-            </table>
+        <!-- 9) 화면 상단 - 통계 및 데이터 download -->
+        <h2>통계 및 데이터 관리</h2>
+        <div class="query-options">
+            <label for="query_period">기간:</label>
+            <select id="query_period">
+                <option value="금일" selected>금일</option>
+                <option value="전일">전일</option>
+                <option value="금주">금주</option>                                
+                <option value="전주">전주</option>
+                <option value="금월">금월</option>
+                <option value="전월">전월</option>
+                <option value="금년">금년</option>
+                <option value="전년">전년</option>
+            </select>
+            
+            <label for="query_region">구분:</label>
+            <select id="query_region">
+                <option value="국내외 합산" selected>국내외 합산</option>
+                <option value="국내">국내</option>
+                <option value="국외">국외</option>
+            </select>
+            <button id="queryButton" class="query-button">조회</button>
+            <button id="downloadButton">Raw Data Download (UTF-8)</button>
         </div>
-                <div id="paginationContainer" class="pagination"></div>
-    </div>
 
-    <script>
-        const API_URL = 'https://port-0-loyola-cataloging-pjt-mgmc05ze5b2b3168.sel3.cloudtype.app/api/catalog';
-        const USER_ACCOUNT = 'admin';
-        
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        let isEditing = false;
-        let selectedId = null;
-        let currentPeriod = '금주'; // Admin default
-        let currentRegion = '국내외 합산'; // Admin default
-        let currentRawData = []; // To store data for download
+        <!-- 9-2) 통계 결과 -->
+        <h3 id="statsTitle">조회 기간: (yyyy/mm/dd ~ yyyy/mm/dd)</h3>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>신규 종수</th>
+                    <th>신규 책수</th>
+                    <th>재정리 종수</th>
+                    <th>재정리 책수</th>
+                    <th>다권본 종수</th>
+                    <th>다권본 책수</th>
+                    <th>교열 책수</th>
+                    <th>전거 수</th>
+                </tr>
+            </thead>
+            <tbody id="statsTableBody">
+                <tr>
+                    <td id="stat_new_species">0</td>
+                    <td id="stat_new_bookcount">0</td>
+                    <td id="stat_rearray_species">0</td>
+                    <td id="stat_rearray_bookcount">0</td>
+                    <td id="stat_multipart_species">0</td>
+                    <td id="stat_multipart_bookcount">0</td>
+                    <td id="stat_edit_bookcount">0</td>
+                    <td id="stat_authority_bookcount">0</td>
+                </tr>
+            </tbody>
+        </table>
 
-        // Helper to display messages (Copied from guest for consistency)
-        function showMessage(message, type = 'success') {
-            const box = document.getElementById('messageBox');
-            box.textContent = message;
-            box.className = 'messageBox ' + type;
-            box.style.display = 'block';
-            setTimeout(() => box.style.display = 'none', 5000);
-        }
+        <!-- 10) 화면 중앙 - 신규 등록 (Guest와 동일) -->
+        <h2>신규 등록 (관리자)</h2>
+        <table class="input-table">
+            <thead>
+                <tr>
+                    <th>구분</th> <!-- '지역' -> '구분' 변경 -->
+                    <th>작업자</th>
+                    <th>작업일시</th>
+                    <th>신규 종수</th>
+                    <th>신규 책수</th>
+                    <th>재정리 종수</th>
+                    <th>재정리 책수</th>
+                    <th>다권본 종수</th>
+                    <th>다권본 책수</th>
+                    <th>교열 책수</th>
+                    <th>전거 수</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><select id="input_region"><option value="국내">국내</option><option value="국외">국외</option></select></td>
+                    <td><input type="text" id="input_worker" value="로욜라"></td>
+                    <td><input type="date" id="input_w_date"></td>
+                    <td><input type="text" id="input_new_species" value="0"></td>
+                    <td><input type="text" id="input_new_bookcount" value="0"></td>
+                    <td><input type="text" id="input_rearray_species" value="0"></td>
+                    <td><input type="text" id="input_rearray_bookcount" value="0"></td>
+                    <td><input type="text" id="input_multipart_species" value="0"></td>
+                    <td><input type="text" id="input_multipart_bookcount" value="0"></td>
+                    <td><input type="text" id="input_edit_bookcount" value="0"></td>
+                    <td><input type="text" id="input_authority_bookcount" value="0"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button id="insertButton">등록</button>
 
-        // Get today's date in YYYY-MM-DD format (for input default)
-        function getTodayDate() {
-            const today = new Date();
-            const y = today.getFullYear();
-            const m = String(today.getMonth() + 1).padStart(2, '0');
-            const d = String(today.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
-        document.getElementById('input_w_date').value = getTodayDate();
+        <!-- 11) 화면 하단 - 수정/삭제 데이터 (Guest와 동일, 9-3에 의해 조회 기간 동기화) -->
+        <h2 style="margin-top: 50px;">작업 내용 조회 및 수정/삭제 (관리자)</h2>
+        <div class="action-buttons">
+            <button id="editStartButton" class="edit-buttons" disabled>수정</button>
+            <button id="deleteButton" class="delete-buttons" disabled>삭제</button>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>선택</th>
+                    <th>ID</th>
+                    <th>구분</th>
+                    <th>작업자</th>
+                    <th>작업일시</th>
+                    <th>신규 종수</th>
+                    <th>신규 책수</th>
+                    <th>재정리 종수</th>
+                    <th>재정리 책수</th>
+                    <th>다권본 종수</th>
+                    <th>다권본 책수</th>
+                    <th>교열 책수</th>
+                    <th>전거 수</th>
+                    <th>수정 계정</th>
+                </tr>
+            </thead>
+            <tbody id="dataTableBody">
+                <!-- Data rows will be inserted here -->
+            </tbody>
+        </table>
+        <div id="paginationContainer" class="pagination"></div>
+    </div>
 
-        // 12) HOME 버튼 이동
-        document.getElementById('homeButton').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
+    <script>
+        const API_URL = 'https://port-0-loyola-cataloging-pjt-mgmc05ze5b2b3168.sel3.cloudtype.app/api/catalog';
+        const USER_ACCOUNT = 'admin';
+        
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let isEditing = false;
+        let selectedId = null;
+        let currentPeriod = '금주'; // Admin default
+        let currentRegion = '국내외 합산'; // Admin default
+        let currentRawData = []; // To store data for download
 
-        // --- Stats & Download Logic ---
+        // Helper to display messages (Copied from guest for consistency)
+        function showMessage(message, type = 'success') {
+            const box = document.getElementById('messageBox');
+            box.textContent = message;
+            box.className = 'messageBox ' + type;
+            box.style.display = 'block';
+            setTimeout(() => box.style.display = 'none', 5000);
+        }
 
-        async function fetchStatsAndData() {
-            currentPeriod = document.getElementById('query_period').value;
-            currentRegion = document.getElementById('query_region').value;
-            currentPage = 1; // 통계 조회 시 페이지 초기화
+        // Get today's date in YYYY-MM-DD format (for input default)
+        function getTodayDate() {
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const d = String(today.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        document.getElementById('input_w_date').value = getTodayDate();
 
-            try {
-                // 9) 통계 및 rawData 동시 조회 API 호출
-                const response = await fetch(`${API_URL}/stats?period=${currentPeriod}&region=${currentRegion}`);
-                if (!response.ok) throw new Error('통계 및 데이터 조회에 실패했습니다.');
-                
-                const result = await response.json();
-                
-                // 9-2) 통계 결과 표시
-                renderStats(result.stats, result.dateRange);
-                
-                // 9-3) 조회 기간 데이터를 하단 표에 출력 동기화 (Pagination 적용)
-                currentRawData = result.rawData; // 모든 raw data 저장
-                renderTablePage(currentRawData, currentPage);
-                renderPagination(Math.ceil(currentRawData.length / itemsPerPage));
+        // 12) HOME 버튼 이동
+        document.getElementById('homeButton').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
 
-            } catch (error) {
-                console.error('Fetch error:', error);
-                showMessage('통계/데이터 조회 중 오류 발생: ' + error.message, 'error');
-            }
-        }
+        // --- Stats & Download Logic ---
 
-        function renderStats(stats, dateRange) {
-            document.getElementById('statsTitle').textContent = `조회 기간: ${dateRange.start} ~ ${dateRange.end}`;
-            
-            // Stats columns are named with _sum suffix in main.js
-            document.getElementById('stat_new_species').textContent = stats.new_species_sum || '0';
-            document.getElementById('stat_new_bookcount').textContent = stats.new_bookcount_sum || '0';
-            document.getElementById('stat_rearray_species').textContent = stats.rearray_species_sum || '0';
-            document.getElementById('stat_rearray_bookcount').textContent = stats.rearray_bookcount_sum || '0';
-            document.getElementById('stat_multipart_species').textContent = stats.multipart_species_sum || '0';
-            document.getElementById('stat_multipart_bookcount').textContent = stats.multipart_bookcount_sum || '0';
-            document.getElementById('stat_edit_bookcount').textContent = stats.edit_bookcount_sum || '0';
-            document.getElementById('stat_authority_bookcount').textContent = stats.authority_bookcount_sum || '0';
-        }
+        async function fetchStatsAndData() {
+            currentPeriod = document.getElementById('query_period').value;
+            currentRegion = document.getElementById('query_region').value;
+            currentPage = 1; // 통계 조회 시 페이지 초기화
 
-        // 9-4) Raw Data Download
-        document.getElementById('downloadButton').addEventListener('click', () => {
-            if (currentRawData.length === 0) {
-                showMessage('다운로드할 데이터가 없습니다.', 'error');
-                return;
-            }
+            try {
+                // 9) 통계 및 rawData 동시 조회 API 호출
+                const response = await fetch(`${API_URL}/stats?period=${currentPeriod}&region=${currentRegion}`);
+                if (!response.ok) throw new Error('통계 및 데이터 조회에 실패했습니다.');
+                
+                const result = await response.json();
+                
+                // 9-2) 통계 결과 표시
+                renderStats(result.stats, result.dateRange);
+                
+                // 9-3) 조회 기간 데이터를 하단 표에 출력 동기화 (Pagination 적용)
+                currentRawData = result.rawData; // 모든 raw data 저장
+                renderTablePage(currentRawData, currentPage);
+                renderPagination(Math.ceil(currentRawData.length / itemsPerPage));
 
-            const headers = [
-                'ID', '구분', '작업자', '작업일시', '신규 종수', '신규 책수', '재정리 종수', '재정리 책수', 
-                '다권본 종수', '다권본 책수', '교열 책수', '전거 수', '수정일시', '수정 계정'
-            ];
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showMessage('통계/데이터 조회 중 오류 발생: ' + error.message, 'error');
+            }
+        }
 
-            // Convert array of objects to CSV string
-            let csv = headers.join(',') + '\n';
-            currentRawData.forEach(row => {
-                const values = [
-                    row.id, row.region, row.worker, row.w_date, row.new_species, row.new_bookcount, 
-                    row.rearray_species, row.rearray_bookcount, row.multipart_species, row.multipart_bookcount, 
-                    row.edit_bookcount, row.authority_bookcount, row.update_date, row.update_user
-                ];
-                csv += values.map(v => `"${v}"`).join(',') + '\n';
-            });
+        function renderStats(stats, dateRange) {
+            document.getElementById('statsTitle').textContent = `조회 기간: ${dateRange.start} ~ ${dateRange.end}`;
+            
+            // Stats columns are named with _sum suffix in main.js
+            document.getElementById('stat_new_species').textContent = stats.new_species_sum || '0';
+            document.getElementById('stat_new_bookcount').textContent = stats.new_bookcount_sum || '0';
+            document.getElementById('stat_rearray_species').textContent = stats.rearray_species_sum || '0';
+            document.getElementById('stat_rearray_bookcount').textContent = stats.rearray_bookcount_sum || '0';
+            document.getElementById('stat_multipart_species').textContent = stats.multipart_species_sum || '0';
+            document.getElementById('stat_multipart_bookcount').textContent = stats.multipart_bookcount_sum || '0';
+            document.getElementById('stat_edit_bookcount').textContent = stats.edit_bookcount_sum || '0';
+            document.getElementById('stat_authority_bookcount').textContent = stats.authority_bookcount_sum || '0';
+        }
 
-            // Create Blob and download (UTF-8)
-            const blob = new Blob(["\ufeff", csv], { type: 'text/csv;charset=utf-8;' }); // \ufeff is UTF-8 BOM
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `loyola_cataloging_${currentPeriod}_${currentRegion}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showMessage('데이터 다운로드를 시작합니다.', 'success');
-        });
+        // 9-4) Raw Data Download
+        document.getElementById('downloadButton').addEventListener('click', () => {
+            if (currentRawData.length === 0) {
+                showMessage('다운로드할 데이터가 없습니다.', 'error');
+                return;
+            }
 
-        document.getElementById('queryButton').addEventListener('click', fetchStatsAndData);
+            const headers = [
+                'ID', '구분', '작업자', '작업일시', '신규 종수', '신규 책수', '재정리 종수', '재정리 책수', 
+                '다권본 종수', '다권본 책수', '교열 책수', '전거 수', '수정일시', '수정 계정'
+            ];
+
+            // Convert array of objects to CSV string
+            let csv = headers.join(',') + '\n';
+            currentRawData.forEach(row => {
+                const values = [
+                    row.id, row.region, row.worker, row.w_date, row.new_species, row.new_bookcount, 
+                    row.rearray_species, row.rearray_bookcount, row.multipart_species, row.multipart_bookcount, 
+                    row.edit_bookcount, row.authority_bookcount, row.update_date, row.update_user
+                ];
+                csv += values.map(v => `"${v}"`).join(',') + '\n';
+            });
+
+            // Create Blob and download (UTF-8)
+            const blob = new Blob(["\ufeff", csv], { type: 'text/csv;charset=utf-8;' }); // \ufeff is UTF-8 BOM
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `loyola_cataloging_${currentPeriod}_${currentRegion}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage('데이터 다운로드를 시작합니다.', 'success');
+        });
+
+        document.getElementById('queryButton').addEventListener('click', fetchStatsAndData);
 
 
-        // --- Data Table (CRUD) Functions (Modified for local data pagination) ---
+        // --- Data Table (CRUD) Functions (Modified for local data pagination) ---
 
-        function renderTablePage(data, page) {
-            currentPage = page;
-            const tbody = document.getElementById('dataTableBody');
-            tbody.innerHTML = '';
-            selectedId = null;
-            document.getElementById('editStartButton').disabled = true;
-            document.getElementById('deleteButton').disabled = true;
-            isEditing = false;
+        function renderTablePage(data, page) {
+            currentPage = page;
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+            selectedId = null;
+            document.getElementById('editStartButton').disabled = true;
+            document.getElementById('deleteButton').disabled = true;
+            isEditing = false;
 
-            const start = (page - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = data.slice(start, end);
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = data.slice(start, end);
 
-            if (pageData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="14">조회된 데이터가 없습니다.</td></tr>';
-                return;
-            }
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="14">조회된 데이터가 없습니다.</td></tr>';
+                return;
+            }
 
-            pageData.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.dataset.id = item.id;
-                
-                // w_date는 yyyy-mm-dd 까지만 표시
-                const w_date_display = item.w_date ? item.w_date.substring(0, 10) : ''; 
+            pageData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = item.id;
+                
+                // w_date는 yyyy-mm-dd 까지만 표시
+                const w_date_display = item.w_date ? item.w_date.substring(0, 10) : ''; 
 
-                tr.innerHTML = `
-                    <td><input type="radio" name="selectRow" value="${item.id}" onchange="handleRowSelection(this)"></td>
-                    <td>${item.id}</td>
-                    <td data-col="region">${item.region}</td>
-                    <td data-col="worker">${item.worker}</td>
-                    <td data-col="w_date">${w_date_display}</td>
-                    <td data-col="new_species">${item.new_species}</td>
-                    <td data-col="new_bookcount">${item.new_bookcount}</td>
-                    <td data-col="rearray_species">${item.rearray_species}</td>
-                    <td data-col="rearray_bookcount">${item.rearray_bookcount}</td>
-                    <td data-col="multipart_species">${item.multipart_species}</td>
-                    <td data-col="multipart_bookcount">${item.multipart_bookcount}</td>
-                    <td data-col="edit_bookcount">${item.edit_bookcount}</td>
-                    <td data-col="authority_bookcount">${item.authority_bookcount}</td>
-                    <td data-col="update_user">${item.update_user}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+                tr.innerHTML = `
+                    <td><input type="radio" name="selectRow" value="${item.id}" onchange="handleRowSelection(this)"></td>
+                    <td>${item.id}</td>
+                    <td data-col="region">${item.region}</td>
+                    <td data-col="worker">${item.worker}</td>
+                    <td data-col="w_date">${w_date_display}</td>
+                    <td data-col="new_species">${item.new_species}</td>
+                    <td data-col="new_bookcount">${item.new_bookcount}</td>
+                    <td data-col="rearray_species">${item.rearray_species}</td>
+                    <td data-col="rearray_bookcount">${item.rearray_bookcount}</td>
+                    <td data-col="multipart_species">${item.multipart_species}</td>
+                    <td data-col="multipart_bookcount">${item.multipart_bookcount}</td>
+                    <td data-col="edit_bookcount">${item.edit_bookcount}</td>
+                    <td data-col="authority_bookcount">${item.authority_bookcount}</td>
+                    <td data-col="update_user">${item.update_user}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-        function renderPagination(totalPages) {
-            const container = document.getElementById('paginationContainer');
-            container.innerHTML = '';
+        function renderPagination(totalPages) {
+            const container = document.getElementById('paginationContainer');
+            container.innerHTML = '';
 
-            for (let i = 1; i <= totalPages; i++) {
-                const button = document.createElement('button');
-                button.textContent = i;
-                button.classList.add('page-button');
-                if (i === currentPage) {
-                    button.classList.add('active');
-                }
-                // 페이지 버튼 클릭 시, 현재 rawData를 사용하여 페이지 렌더링
-                button.addEventListener('click', () => renderTablePage(currentRawData, i));
-                container.appendChild(button);
-            }
-        }
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.classList.add('page-button');
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+                // 페이지 버튼 클릭 시, 현재 rawData를 사용하여 페이지 렌더링
+                button.addEventListener('click', () => renderTablePage(currentRawData, i));
+                container.appendChild(button);
+            }
+        }
 
-        function handleRowSelection(radio) {
-            selectedId = radio.value;
-            document.getElementById('editStartButton').disabled = false;
-            document.getElementById('deleteButton').disabled = false;
-        }
+        function handleRowSelection(radio) {
+            selectedId = radio.value;
+            document.getElementById('editStartButton').disabled = false;
+            document.getElementById('deleteButton').disabled = false;
+        }
 
-        // --- CRUD Operations (Mostly copied from guest, using Admin account) ---
+        // --- CRUD Operations (Mostly copied from guest, using Admin account) ---
 
-        // 10) 신규 등록
-        document.getElementById('insertButton').addEventListener('click', async () => {
-            const data = {
-                region: document.getElementById('input_region').value,
-                worker: document.getElementById('input_worker').value,
-                w_date: document.getElementById('input_w_date').value,
-                new_species: document.getElementById('input_new_species').value,
-                new_bookcount: document.getElementById('input_new_bookcount').value,
-                rearray_species: document.getElementById('input_rearray_species').value,
-                rearray_bookcount: document.getElementById('input_rearray_bookcount').value,
-                multipart_species: document.getElementById('input_multipart_species').value,
-                multipart_bookcount: document.getElementById('input_multipart_bookcount').value,
-                edit_bookcount: document.getElementById('input_edit_bookcount').value,
-                authority_bookcount: document.getElementById('input_authority_bookcount').value,
-                update_user: USER_ACCOUNT 
-            };
+        // 10) 신규 등록
+        document.getElementById('insertButton').addEventListener('click', async () => {
+            const data = {
+                region: document.getElementById('input_region').value,
+                worker: document.getElementById('input_worker').value,
+                w_date: document.getElementById('input_w_date').value,
+                new_species: document.getElementById('input_new_species').value,
+                new_bookcount: document.getElementById('input_new_bookcount').value,
+                rearray_species: document.getElementById('input_rearray_species').value,
+                rearray_bookcount: document.getElementById('input_rearray_bookcount').value,
+                multipart_species: document.getElementById('input_multipart_species').value,
+                multipart_bookcount: document.getElementById('input_multipart_bookcount').value,
+                edit_bookcount: document.getElementById('input_edit_bookcount').value,
+                authority_bookcount: document.getElementById('input_authority_bookcount').value,
+                update_user: USER_ACCOUNT 
+            };
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
 
-                if (!response.ok) throw new Error('등록 중 서버 오류가 발생했습니다.');
+                if (!response.ok) throw new Error('등록 중 서버 오류가 발생했습니다.');
 
-                const result = await response.json();
-                showMessage('신규 카탈로깅 기록이 성공적으로 등록되었습니다. (ID: ' + result.data.id + ')');
-                fetchStatsAndData(); // 통계/표 refresh
-            } catch (error) {
-                console.error('Insert error:', error);
-                showMessage('등록 실패: ' + error.message, 'error');
-            }
-        });
+                const result = await response.json();
+                showMessage('신규 카탈로깅 기록이 성공적으로 등록되었습니다. (ID: ' + result.data.id + ')');
+                fetchStatsAndData(); // 통계/표 refresh
+            } catch (error) {
+                console.error('Insert error:', error);
+                showMessage('등록 실패: ' + error.message, 'error');
+            }
+        });
 
-        // 11) 삭제 작업
-        document.getElementById('deleteButton').addEventListener('click', async () => {
-            if (!selectedId) {
-                showMessage('삭제할 항목을 먼저 선택해주세요.', 'error');
-                return;
-            }
+        // 11) 삭제 작업
+        document.getElementById('deleteButton').addEventListener('click', async () => {
+            if (!selectedId) {
+                showMessage('삭제할 항목을 먼저 선택해주세요.', 'error');
+                return;
+            }
 
-            if (!confirm('정말로 ID ' + selectedId + ' 항목을 삭제하시겠습니까?')) {
-                return;
-            }
+            if (!confirm('정말로 ID ' + selectedId + ' 항목을 삭제하시겠습니까?')) {
+                return;
+            }
 
-            try {
-                const response = await fetch(`${API_URL}/${selectedId}`, {
-                    method: 'DELETE'
-                });
+            try {
+                const response = await fetch(`${API_URL}/${selectedId}`, {
+                    method: 'DELETE'
+                });
 
-                if (!response.ok) throw new Error('삭제 중 서버 오류가 발생했습니다.');
+                if (!response.ok) throw new Error('삭제 중 서버 오류가 발생했습니다.');
 
-                showMessage('ID ' + selectedId + ' 항목이 성공적으로 삭제되었습니다.');
-                fetchStatsAndData(); // 통계/표 refresh
-            } catch (error) {
-                console.error('Delete error:', error);
-                showMessage('삭제 실패: ' + error.message, 'error');
-            }
-        });
+                showMessage('ID ' + selectedId + ' 항목이 성공적으로 삭제되었습니다.');
+                fetchStatsAndData(); // 통계/표 refresh
+            } catch (error) {
+                console.error('Delete error:', error);
+                showMessage('삭제 실패: ' + error.message, 'error');
+            }
+        });
 
-        // 11) 수정 작업 시작
-        document.getElementById('editStartButton').addEventListener('click', (e) => {
-            if (!selectedId) {
-                showMessage('수정할 항목을 먼저 선택해주세요.', 'error');
-                return;
-            }
-            if (isEditing) return; 
+        // 11) 수정 작업 시작
+        document.getElementById('editStartButton').addEventListener('click', (e) => {
+            if (!selectedId) {
+                showMessage('수정할 항목을 먼저 선택해주세요.', 'error');
+                return;
+            }
+            if (isEditing) return; 
 
-            isEditing = true;
-            e.target.textContent = '수정 완료';
-            e.target.id = 'editCompleteButton';
-            e.target.className = 'complete-buttons';
-            document.getElementById('deleteButton').disabled = true;
+            isEditing = true;
+            e.target.textContent = '수정 완료';
+            e.target.id = 'editCompleteButton';
+            e.target.className = 'complete-buttons';
+            document.getElementById('deleteButton').disabled = true;
 
-            const row = document.querySelector(`tr[data-id="${selectedId}"]`);
-            const colsToEdit = ['region', 'worker', 'w_date', 'new_species', 'new_bookcount', 'rearray_species', 'rearray_bookcount', 'multipart_species', 'multipart_bookcount', 'edit_bookcount', 'authority_bookcount'];
-            
-            colsToEdit.forEach(col => {
-                const cell = row.querySelector(`td[data-col="${col}"]`);
-                const originalValue = cell.textContent;
-                
-                let inputElement;
-                if (col === 'region') {
-                    inputElement = `<select id="edit_${col}"><option value="국내">국내</option><option value="국외">국외</option></select>`;
-                } else if (col === 'w_date') {
-                    inputElement = `<input type="date" id="edit_${col}" value="${originalValue.substring(0, 10)}" style="width: 100%;">`;
-                } else {
-                    inputElement = `<input type="text" id="edit_${col}" value="${originalValue}" style="width: 100%;">`;
-                }
-                
-                cell.dataset.original = originalValue;
-                cell.innerHTML = inputElement;
-                if (col === 'region') {
-                    document.getElementById(`edit_${col}`).value = originalValue;
-                }
-            });
+            const row = document.querySelector(`tr[data-id="${selectedId}"]`);
+            const colsToEdit = ['region', 'worker', 'w_date', 'new_species', 'new_bookcount', 'rearray_species', 'rearray_bookcount', 'multipart_species', 'multipart_bookcount', 'edit_bookcount', 'authority_bookcount'];
+            
+            colsToEdit.forEach(col => {
+                const cell = row.querySelector(`td[data-col="${col}"]`);
+                const originalValue = cell.textContent;
+                
+                let inputElement;
+                if (col === 'region') {
+                    inputElement = `<select id="edit_${col}"><option value="국내">국내</option><option value="국외">국외</option></select>`;
+                } else if (col === 'w_date') {
+                    inputElement = `<input type="date" id="edit_${col}" value="${originalValue.substring(0, 10)}" style="width: 100%;">`;
+                } else {
+                    inputElement = `<input type="text" id="edit_${col}" value="${originalValue}" style="width: 100%;">`;
+                }
+                
+                cell.dataset.original = originalValue;
+                cell.innerHTML = inputElement;
+                if (col === 'region') {
+                    document.getElementById(`edit_${col}`).value = originalValue;
+                }
+            });
 
-            document.getElementById('editCompleteButton').addEventListener('click', handleEditComplete, { once: true });
-        });
+            document.getElementById('editCompleteButton').addEventListener('click', handleEditComplete, { once: true });
+        });
 
-        // 11) 수정 작업 완료
-        async function handleEditComplete() {
-            const row = document.querySelector(`tr[data-id="${selectedId}"]`);
-            const colsToEdit = ['region', 'worker', 'w_date', 'new_species', 'new_bookcount', 'rearray_species', 'rearray_bookcount', 'multipart_species', 'multipart_bookcount', 'edit_bookcount', 'authority_bookcount'];
-            
-            const updatedData = {
-                id: selectedId,
-                update_user: USER_ACCOUNT 
-            };
+        // 11) 수정 작업 완료
+        async function handleEditComplete() {
+            const row = document.querySelector(`tr[data-id="${selectedId}"]`);
+            const colsToEdit = ['region', 'worker', 'w_date', 'new_species', 'new_bookcount', 'rearray_species', 'rearray_bookcount', 'multipart_species', 'multipart_bookcount', 'edit_bookcount', 'authority_bookcount'];
+            
+            const updatedData = {
+                id: selectedId,
+                update_user: USER_ACCOUNT 
+            };
 
-            colsToEdit.forEach(col => {
-                const inputElement = document.getElementById(`edit_${col}`);
-                if (inputElement) {
-                    updatedData[col] = inputElement.value;
-                }
-            });
-            
-            try {
-                const response = await fetch(`${API_URL}/${selectedId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedData)
-                });
+            colsToEdit.forEach(col => {
+                const inputElement = document.getElementById(`edit_${col}`);
+                if (inputElement) {
+                    updatedData[col] = inputElement.value;
+                }
+            });
+            
+            try {
+                const response = await fetch(`${API_URL}/${selectedId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
 
-                if (!response.ok) throw new Error('수정 중 서버 오류가 발생했습니다.');
+                if (!response.ok) throw new Error('수정 중 서버 오류가 발생했습니다.');
 
-                showMessage('ID ' + selectedId + ' 항목이 성공적으로 수정되었습니다.');
-                fetchStatsAndData(); // 통계/표 refresh
+                showMessage('ID ' + selectedId + ' 항목이 성공적으로 수정되었습니다.');
+                fetchStatsAndData(); // 통계/표 refresh
 
-            } catch (error) {
-                console.error('Update error:', error);
-                showMessage('수정 실패: ' + error.message, 'error');
-                fetchStatsAndData(); // 오류 시 원래 상태로 복구
-            } finally {
-                // Restore button state
-                const completeButton = document.getElementById('editCompleteButton');
-                completeButton.textContent = '수정';
-                completeButton.id = 'editStartButton';
-                completeButton.className = 'edit-buttons';
-                document.getElementById('deleteButton').disabled = false;
-                isEditing = false;
-            }
-        }
+            } catch (error) {
+                console.error('Update error:', error);
+                showMessage('수정 실패: ' + error.message, 'error');
+                fetchStatsAndData(); // 오류 시 원래 상태로 복구
+            } finally {
+                // Restore button state
+                const completeButton = document.getElementById('editCompleteButton');
+                completeButton.textContent = '수정';
+                completeButton.id = 'editStartButton';
+                completeButton.className = 'edit-buttons';
+                document.getElementById('deleteButton').disabled = false;
+                isEditing = false;
+            }
+        }
 
-        // Initial Data Load (Default: 금주, 국내외 합산)
-        fetchStatsAndData();
-    </script>
+        // Initial Data Load (Default: 금주, 국내외 합산)
+        fetchStatsAndData();
+    </script>
 </body>
 </html>
