@@ -76,13 +76,11 @@
         <button id="homeButton">HOME</button>
         <div id="messageBox"></div>
 
-        <!-- 6) 화면 상단 - 신규 등록 -->
         <h2>신규 등록</h2>
         <table class="input-table">
             <thead>
                 <tr>
-                    <th>구분</th> <!-- '지역' -> '구분' 변경 -->
-                    <th>작업자</th>
+                    <th>구분</th> <th>작업자</th>
                     <th>작업일시</th>
                     <th>신규 종수</th>
                     <th>신규 책수</th>
@@ -97,7 +95,7 @@
             <tbody>
                 <tr>
                     <td><select id="input_region"><option value="국내">국내</option><option value="국외">국외</option></select></td>
-                    <td><input type="text" id="input_worker" value="로욜라"></td>
+                    <td><input type="text" id="input_worker" value=""></td>
                     <td><input type="date" id="input_w_date"></td>
                     <td><input type="text" id="input_new_species" value="0"></td>
                     <td><input type="text" id="input_new_bookcount" value="0"></td>
@@ -113,7 +111,6 @@
         <button id="insertButton">등록</button>
 
 
-        <!-- 7) 화면 하단 - 수정/삭제 데이터 -->
         <h2 style="margin-top: 50px;">작업 내용 조회 및 수정/삭제 (최근 3일)</h2>
         <div class="action-buttons">
             <button id="editStartButton" class="edit-buttons" disabled>수정</button>
@@ -139,8 +136,7 @@
                 </tr>
             </thead>
             <tbody id="dataTableBody">
-                <!-- Data rows will be inserted here -->
-            </tbody>
+                </tbody>
         </table>
         <div id="paginationContainer" class="pagination"></div>
     </div>
@@ -175,6 +171,23 @@
             return `${y}-${m}-${d}`;
         }
         document.getElementById('input_w_date').value = getTodayDate();
+
+        // 🌟 요청하신 스크립트 추가: 작업자 필드에 랜덤 값 설정 🌟
+        function setRandomWorker() {
+            const workerNames = ['로욜라', '홍길동', '서강대'];
+            // 0, 1, 2 중 하나의 랜덤 인덱스를 생성
+            const randomIndex = Math.floor(Math.random() * workerNames.length); 
+            const randomName = workerNames[randomIndex];
+            
+            const workerInput = document.getElementById('input_worker');
+            if (workerInput) {
+                workerInput.value = randomName;
+            }
+        }
+        
+        // 페이지 로드 시 작업자 이름 랜덤으로 설정
+        setRandomWorker();
+        // 🌟 요청하신 스크립트 추가 끝 🌟
 
         // 8) & 12) HOME 버튼 이동
         document.getElementById('homeButton').addEventListener('click', () => {
@@ -413,5 +426,3 @@
     </script>
 </body>
 </html>
-
-
