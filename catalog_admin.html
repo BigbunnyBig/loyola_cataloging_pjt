@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>정리실 일일 통계 시스템 (관리자)</title>
-    <!-- CSS is copied from catalog_guest.html for consistency and applied here -->
     <style>
         body { font-family: 'Inter', sans-serif; padding: 20px; background-color: #f4f7f9; }
         .container { max-width: 1400px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }
@@ -88,7 +87,6 @@
         <button id="homeButton">HOME</button>
         <div id="messageBox"></div>
 
-        <!-- 9) 화면 상단 - 통계 및 데이터 download -->
         <h2>통계 및 데이터 관리</h2>
         <div class="query-options">
             <label for="query_period">기간:</label>
@@ -113,7 +111,6 @@
             <button id="downloadButton">Raw Data Download</button>
         </div>
 
-        <!-- 9-2) 통계 결과 -->
         <h3 id="statsTitle">조회 기간: (yyyy/mm/dd ~ yyyy/mm/dd)</h3>
         <table class="stats-table">
             <thead>
@@ -142,13 +139,11 @@
             </tbody>
         </table>
 
-        <!-- 10) 화면 중앙 - 신규 등록 (Guest와 동일) -->
         <h2>신규 등록 (관리자)</h2>
         <table class="input-table">
             <thead>
                 <tr>
-                    <th>구분</th> <!-- '지역' -> '구분' 변경 -->
-                    <th>작업자</th>
+                    <th>구분</th> <th>작업자</th>
                     <th>작업일시</th>
                     <th>신규 종수</th>
                     <th>신규 책수</th>
@@ -178,7 +173,6 @@
         </table>
         <button id="insertButton">등록</button>
 
-        <!-- 11) 화면 하단 - 수정/삭제 데이터 (Guest와 동일, 9-3에 의해 조회 기간 동기화) -->
         <h2 style="margin-top: 50px;">작업 내용 조회 및 수정/삭제 (관리자)</h2>
         <div class="action-buttons">
             <button id="editStartButton" class="edit-buttons" disabled>수정</button>
@@ -204,8 +198,7 @@
                 </tr>
             </thead>
             <tbody id="dataTableBody">
-                <!-- Data rows will be inserted here -->
-            </tbody>
+                </tbody>
         </table>
         <div id="paginationContainer" class="pagination"></div>
     </div>
@@ -241,6 +234,14 @@
         }
         document.getElementById('input_w_date').value = getTodayDate();
 
+        // **새로 추가된 작업자 랜덤 설정 로직**
+        const WORKERS = ['로욜라', '도서관', '서강대', '정리실', '인벤튬', '열람실', 'ING', '대출대' ,'무인반납', '유드림홀', '캠퍼스' ,'박찬욱', '문성근', '박은빈', '마왕', '양희은', '유병재','예수회','이냐시오','진리','순종',' IHS','서강체','알바트로스','이희승','안익태','서강이','알로스','게페르트','가브리엘','마태오관','모어','메리홀','엠마오','최양업','하비에르','다산','곤자가','아담샬','김대건','아루페','베르크만스','노고산','하늬가람','백범로' ];
+        function setRandomWorker() {
+            const randomIndex = Math.floor(Math.random() * WORKERS.length);
+            document.getElementById('input_worker').value = WORKERS[randomIndex];
+        }
+        setRandomWorker(); // 페이지 로드 시 한 번 실행
+
         // 12) HOME 버튼 이동
         document.getElementById('homeButton').addEventListener('click', () => {
             window.location.href = 'index.html';
@@ -252,6 +253,7 @@
             currentPeriod = document.getElementById('query_period').value;
             currentRegion = document.getElementById('query_region').value;
             currentPage = 1; // 통계 조회 시 페이지 초기화
+            setRandomWorker(); // 데이터를 다시 불러올 때 작업자도 랜덤으로 설정
 
             try {
                 // 9) 통계 및 rawData 동시 조회 API 호출
@@ -548,6 +550,3 @@
     </script>
 </body>
 </html>
-
-
-
