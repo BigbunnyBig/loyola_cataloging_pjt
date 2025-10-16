@@ -3,112 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loyola Cataloging System - 로그인</title>
+    <title>Guest 정리실 작업 등록</title>
     <style>
-        body { font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f4f7f9; }
-        .container { display: flex; flex-direction: column; gap: 30px; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); width: 350px; }
-        h1 { text-align: center; color: #1e3a8a; margin-bottom: 20px; font-weight: 700; }
-        .section { background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; }
-        .section h2 { margin-top: 0; font-size: 1.25rem; color: #374151; }
-        button, .link-button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.3s; width: 100%; text-align: center; text-decoration: none; display: block;}
-        .guest-button { background-color: #3b82f6; color: white; }
-        .guest-button:hover { background-color: #2563eb; }
-        .admin-section { display: flex; flex-direction: column; gap: 15px; }
-        .password-group { position: relative; }
-        .password-group input { width: 100%; padding: 12px 40px 12px 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280; font-size: 0.9rem; }
-        .admin-button { background-color: #10b981; color: white; }
-        .admin-button:hover { background-color: #059669; }
-        .message-box { padding: 10px; background-color: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; margin-top: 10px; text-align: center; display: none; }
+        body { font-family: 'Inter', sans-serif; padding: 20px; background-color: #f4f7f9; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }
+        h1 { color: #1e3a8a; text-align: center; margin-bottom: 30px; }
+        h2 { color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; margin-top: 30px; }
+        
+        /* Table Styling */
+        .data-table, .input-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
+        .data-table th, .data-table td, .input-table th, .input-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: center; }
+        .data-table th, .input-table th { background-color: #eff6ff; color: #1e3a8a; font-weight: 600; }
+        .data-table tr:nth-child(even) { background-color: #f9fafb; }
+
+        /* Form/Input Styling */
+        /* 입력창 너비 100%로 변경 */
+        .input-table input[type="text"], .input-table input[type="date"], .input-table select { 
+            width: 100%; 
+            padding: 6px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+        }
+        /* 구분(첫 번째) 열 너비 확장 */
+        .input-table th:nth-child(1), .input-table td:nth-child(1) {
+            width: 10%; 
+        }
+        .input-table td.center-content { padding: 0; }
+        
+        /* Button Styling */
+        .action-buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        .action-buttons button, #insertButton, #homeButton { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background-color 0.3s; }
+        #insertButton { background-color: #10b981; color: white; width: 100%; margin-top: 15px; }
+        #insertButton:hover { background-color: #059669; }
+        #homeButton { background-color: #6b7280; color: white; width: 100px; margin-top: 20px;}
+        #homeButton:hover { background-color: #4b5563; }
+        .edit-buttons button { background-color: #f97316; color: white; }
+        .edit-buttons button:hover { background-color: #ea580c; }
+        .delete-buttons button { background-color: #ef4444; color: white; }
+        .delete-buttons button:hover { background-color: #dc2626; }
+        .complete-buttons button { background-color: #2563eb; color: white; }
+
+        /* Pagination */
+        .pagination { margin-top: 15px; text-align: center; }
+        .pagination button { margin: 0 5px; padding: 8px 12px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; }
+        .pagination button.active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+
+        /* Messages */
+        #messageBox { padding: 10px; margin-top: 15px; border-radius: 6px; text-align: center; display: none; }
+        .success { background-color: #d1fae5; color: #065f46; }
+        .error { background-color: #fee2e2; color: #991b1b; }
+
+        /* catalog_admin.html 파일의 <style> 태그 내에 추가 */
+        .data-table td[data-col="worker"] {
+        /* 너비 제한: 테이블 전체 너비에 맞춰 적절한 값 설정 */
+        max-width: 60px; /* 예시: 120px로 제한 */
+        
+        /* 텍스트가 넘칠 때 숨김 */
+        overflow: hidden;
+        
+        /* 텍스트를 한 줄로 유지 */
+        white-space: nowrap;
+        
+        /* 넘치는 텍스트를 줄임표(...)로 표시 */
+        text-overflow: ellipsis;
+        }      
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>로욜라 정리실 일일 통계</h1>
+        <h1 id="pageTitle">Guest 정리실 작업 등록</h1>
+        <button id="homeButton">HOME</button>
+        <div id="messageBox"></div>
 
-        <!-- Guest 계정 -->
-        <div class="section">
-            <h2>Guest 계정 (작업 등록)</h2>
-            <p style="font-size: 0.9rem; color: #6b7280;">* 비밀번호 없음</p>
-            <a href="catalog_guest.html?user=guest" class="link-button guest-button">Guest로 접속</a>
-        </div>
+        <h2>신규 등록</h2>
+        <table class="input-table">
+            <thead>
+                <tr>
+                    <th>구분</th> <th>작업자</th>
+                    <th>작업일시</th>
+                    <th>신규 종수</th>
+                    <th>신규 책수</th>
+                    <th>재정리 종수</th>
+                    <th>재정리 책수</th>
+                    <th>다권본 종수</th>
+                    <th>다권본 책수</th>
+                    <th>교열 책수</th>
+                    <th>전거 수</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><select id="input_region"><option value="국내">국내</option><option value="국외">국외</option></select></td>
+                    <td><input type="text" id="input_worker" value=""></td>
+                    <td><input type="date" id="input_w_date"></td>
+                    <td><input type="text" id="input_new_species" value="0"></td>
+                    <td><input type="text" id="input_new_bookcount" value="0"></td>
+                    <td><input type="text" id="input_rearray_species" value="0"></td>
+                    <td><input type="text" id="input_rearray_bookcount" value="0"></td>
+                    <td><input type="text" id="input_multipart_species" value="0"></td>
+                    <td><input type="text" id="input_multipart_bookcount" value="0"></td>
+                    <td><input type="text" id="input_edit_bookcount" value="0"></td>
+                    <td><input type="text" id="input_authority_bookcount" value="0"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button id="insertButton">등록</button>
 
-        <!-- Admin 계정 -->
-        <div class="section admin-section">
-            <h2>Admin 계정 (시스템 관리)</h2>
-            <div class="password-group">
-                <input type="password" id="adminPassword" placeholder="비밀번호를 입력하세요" required>
-                <span class="toggle-password" id="togglePassword">보기</span>
-            </div>
-            <div id="errorMessage" class="message-box"></div>
-            <button class="admin-button" id="adminLoginButton">Admin으로 접속</button>
+
+        <h2 style="margin-top: 50px;">작업 내용 조회 및 수정/삭제 (최근 3일)</h2>
+        <div class="action-buttons">
+            <button id="editStartButton" class="edit-buttons" disabled>수정</button>
+            <button id="deleteButton" class="delete-buttons" disabled>삭제</button>
         </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>선택</th>
+                    <th>ID</th>
+                    <th>지역</th>
+                    <th>작업자</th>
+                    <th>작업일시</th>
+                    <th>신규 종수</th>
+                    <th>신규 책수</th>
+                    <th>재정리 종수</th>
+                    <th>재정리 책수</th>
+                    <th>다권본 종수</th>
+                    <th>다권본 책수</th>
+                    <th>교열 책수</th>
+                    <th>전거 수</th>
+                    <th>수정 계정</th>
+                </tr>
+            </thead>
+            <tbody id="dataTableBody">
+                </tbody>
+        </table>
+        <div id="paginationContainer" class="pagination"></div>
     </div>
 
     <script>
-        const API_URL = 'https://port-0-loyola-cataloging-pjt-mgmc05ze5b2b3168.sel3.cloudtype.app/api/admin/login'; // Web Server URL
+        const BASE_URL = 'https://port-0-loyola-cataloging-pjt-mgmc05ze5b2b3168.sel3.cloudtype.app/api/catalog';
+        const urlParams = new URLSearchParams(window.location.search);
+        const USER_ACCOUNT = urlParams.get('user') || 'guest';
+        
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let isEditing = false;
+        let selectedId = null;
 
-        const passwordInput = document.getElementById('adminPassword');
-        const loginButton = document.getElementById('adminLoginButton');
-        const togglePassword = document.getElementById('togglePassword');
-        const errorMessage = document.getElementById('errorMessage');
-        const ADMIN_PASS = 'adminloyola';
+        document.getElementById('pageTitle').textContent = USER_ACCOUNT.toUpperCase() + ' 정리실 작업 등록';
 
-        // 4-5-2) 비밀번호 보기/숨기기 기능
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-            togglePassword.textContent = type === 'password' ? '보기' : '숨기기';
+        // Helper to display messages
+        function showMessage(message, type = 'success') {
+            const box = document.getElementById('messageBox');
+            box.textContent = message;
+            box.className = 'messageBox ' + type;
+            box.style.display = 'block';
+            setTimeout(() => box.style.display = 'none', 5000);
+        }
+
+        // Get today's date in YYYY-MM-DD format (for input default)
+        function getTodayDate() {
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const d = String(today.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        document.getElementById('input_w_date').value = getTodayDate();
+
+        // 🌟 요청하신 스크립트 추가: 작업자 필드에 랜덤 값 설정 🌟
+        function setRandomWorker() {
+            const workerNames = ['로욜라', '홍길동', '서강대'];
+            // 0, 1, 2 중 하나의 랜덤 인덱스를 생성
+            const randomIndex = Math.floor(Math.random() * workerNames.length); 
+            const randomName = workerNames[randomIndex];
+            
+            const workerInput = document.getElementById('input_worker');
+            if (workerInput) {
+                workerInput.value = randomName;
+            }
+        }
+        
+        // 페이지 로드 시 작업자 이름 랜덤으로 설정
+        setRandomWorker();
+        // 🌟 요청하신 스크립트 추가 끝 🌟
+
+        // 8) & 12) HOME 버튼 이동
+        document.getElementById('homeButton').addEventListener('click', () => {
+            window.location.href = 'index.html';
         });
 
-        // 로그인 처리 함수
-        const handleLogin = async () => {
-            const password = passwordInput.value;
-            
-            // 4-5-2) 비밀번호 체크 (클라이언트 측 임시 체크, 서버 API 호출)
-            if (password !== ADMIN_PASS) {
-                errorMessage.textContent = '비밀번호가 일치하지 않습니다.';
-                errorMessage.style.display = 'block';
+
+        // --- Data Fetching and Table Rendering ---
+
+        async function fetchData(page = 1) {
+            currentPage = page;
+            try {
+                const response = await fetch(`${BASE_URL}?page=${currentPage}&limit=${itemsPerPage}&period=3일전`);
+                if (!response.ok) throw new Error('데이터 조회에 실패했습니다.');
+                
+                const result = await response.json();
+                renderTable(result.data);
+                renderPagination(result.pagination.totalPages);
+
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showMessage('데이터 조회 중 오류 발생: ' + error.message, 'error');
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+            selectedId = null;
+            document.getElementById('editStartButton').disabled = true;
+            document.getElementById('deleteButton').disabled = true;
+            isEditing = false;
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="14">조회된 데이터가 없습니다.</td></tr>';
+                return;
+            }
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = item.id;
+                
+                tr.innerHTML = `
+                    <td><input type="radio" name="selectRow" value="${item.id}" onchange="handleRowSelection(this)"></td>
+                    <td>${item.id}</td>
+                    <td data-col="region">${item.region}</td>
+                    <td data-col="worker" title="${item.worker}">${item.worker}</td>
+                    <td data-col="w_date">${item.w_date.substring(0, 10)}</td>
+                    <td data-col="new_species">${item.new_species}</td>
+                    <td data-col="new_bookcount">${item.new_bookcount}</td>
+                    <td data-col="rearray_species">${item.rearray_species}</td>
+                    <td data-col="rearray_bookcount">${item.rearray_bookcount}</td>
+                    <td data-col="multipart_species">${item.multipart_species}</td>
+                    <td data-col="multipart_bookcount">${item.multipart_bookcount}</td>
+                    <td data-col="edit_bookcount">${item.edit_bookcount}</td>
+                    <td data-col="authority_bookcount">${item.authority_bookcount}</td>
+                    <td data-col="update_user">${item.update_user}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderPagination(totalPages) {
+            const container = document.getElementById('paginationContainer');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.classList.add('page-button');
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+                button.addEventListener('click', () => fetchData(i));
+                container.appendChild(button);
+            }
+        }
+
+        function handleRowSelection(radio) {
+            selectedId = radio.value;
+            document.getElementById('editStartButton').disabled = false;
+            document.getElementById('deleteButton').disabled = false;
+        }
+
+        // --- CRUD Operations ---
+
+        // 6-4) 신규 등록
+        document.getElementById('insertButton').addEventListener('click', async () => {
+            const data = {
+                region: document.getElementById('input_region').value,
+                worker: document.getElementById('input_worker').value,
+                w_date: document.getElementById('input_w_date').value,
+                new_species: document.getElementById('input_new_species').value,
+                new_bookcount: document.getElementById('input_new_bookcount').value,
+                rearray_species: document.getElementById('input_rearray_species').value,
+                rearray_bookcount: document.getElementById('input_rearray_bookcount').value,
+                multipart_species: document.getElementById('input_multipart_species').value,
+                multipart_bookcount: document.getElementById('input_multipart_bookcount').value,
+                edit_bookcount: document.getElementById('input_edit_bookcount').value,
+                authority_bookcount: document.getElementById('input_authority_bookcount').value,
+                update_user: USER_ACCOUNT // 6-2) login계정 사용
+            };
+
+            try {
+                const response = await fetch(BASE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error('등록 중 서버 오류가 발생했습니다.');
+
+                const result = await response.json();
+                showMessage('신규 카탈로깅 기록이 성공적으로 등록되었습니다. (ID: ' + result.data.id + ')');
+                fetchData(1); // 6-4) 표 refresh
+            } catch (error) {
+                console.error('Insert error:', error);
+                showMessage('등록 실패: ' + error.message, 'error');
+            }
+        });
+
+        // 7-2) 삭제 작업
+        document.getElementById('deleteButton').addEventListener('click', async () => {
+            if (!selectedId) {
+                showMessage('삭제할 항목을 먼저 선택해주세요.', 'error');
+                return;
+            }
+
+            if (!confirm('정말로 ID ' + selectedId + ' 항목을 삭제하시겠습니까?')) {
                 return;
             }
 
             try {
-                // 실제 서버 API를 통해 인증 (보안을 위해 실제 환경에서는 서버 호출이 필요함)
-                // 현재는 비밀번호를 클라이언트에서 처리하지만, 구조를 위해 API 호출 방식을 유지
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: password })
+                const response = await fetch(`${BASE_URL}/${selectedId}`, {
+                    method: 'DELETE'
                 });
 
-                const result = await response.json();
+                if (!response.ok) throw new Error('삭제 중 서버 오류가 발생했습니다.');
 
-                if (result.success) {
-                    errorMessage.style.display = 'none';
-                    // 4-5-2) Admin 계정 선택 → catalog_admin.html
-                    window.location.href = 'catalog_admin.html?user=admin';
-                } else {
-                    errorMessage.textContent = result.message || '로그인에 실패했습니다.';
-                    errorMessage.style.display = 'block';
-                }
+                showMessage('ID ' + selectedId + ' 항목이 성공적으로 삭제되었습니다.');
+                fetchData(currentPage); // 표 refresh
             } catch (error) {
-                console.error('Login error:', error);
-                errorMessage.textContent = '서버 접속에 실패했습니다. (Error: ' + error.message + ')';
-                errorMessage.style.display = 'block';
-            }
-        };
-
-        // 4-5-2) Admin 접속 버튼 클릭
-        loginButton.addEventListener('click', handleLogin);
-
-        // 4-5-2) Enter 시 접속
-        passwordInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                handleLogin();
+                console.error('Delete error:', error);
+                showMessage('삭제 실패: ' + error.message, 'error');
             }
         });
+
+        // 7-1) 수정 작업 시작
+        document.getElementById('editStartButton').addEventListener('click', (e) => {
+            if (!selectedId) {
+                showMessage('수정할 항목을 먼저 선택해주세요.', 'error');
+                return;
+            }
+            if (isEditing) return; // 이미 수정 중이면 무시
+
+            isEditing = true;
+            e.target.textContent = '수정 완료';
+            e.target.id = 'editCompleteButton';
+            e.target.className = 'complete-buttons';
+            document.getElementById('deleteButton').disabled = true;
+
+            const row = document.querySelector(`tr[data-id="${selectedId}"]`);
+            const colsToEdit = ['region', 'worker', 'w_date', 'new_species', 'new_bookcount', 'rearray_species', 'rearray_bookcount', 'multipart_species', 'multipart_bookcount', 'edit_bookcount', 'authority_bookcount'];
+            
+            colsToEdit.forEach(col => {
+                const cell = row.querySelector(`td[data-col="${col}"]`);
+                const originalValue = cell.textContent;
+                
+                let inputElement;
+                if (col === 'region') {
+                    inputElement = `<select id="edit_${col}"><option value="국내">국내</option><option value="국외">국외</option></select>`;
+                } else if (col === 'w_date') {
+                    inputElement = `<input type="date" id="edit_${col}" value="${originalValue.substring(0, 10)}" style="width: 100%;">`;
+                } else {
+                    inputElement = `<input type="text" id="edit_${col}" value="${originalValue}" style="width: 100%;">`;
+                }
+                
+                cell.dataset.original = originalValue;
+                cell.innerHTML = inputElement;
+                if (col === 'region') {
+                    document.getElementById(`edit_${col}`).value = originalValue;
+                }
+            });
+
+            // Re-attach the event listener to the new '수정 완료' button
+            document.getElementById('editCompleteButton').addEventListener('click', handleEditComplete, { once: true });
+        });
+
+        // 7-1) 수정 작업 완료
+        async function handleEditComplete() {
+            const row = document.querySelector(`tr[data-id="${selectedId}"]`);
+            const colsToEdit = ['region', 'worker', 'w_date', 'new_species', 'new_bookcount', 'rearray_species', 'rearray_bookcount', 'multipart_species', 'multipart_bookcount', 'edit_bookcount', 'authority_bookcount'];
+            
+            const updatedData = {
+                id: selectedId,
+                update_user: USER_ACCOUNT // 7-1) login계정 사용
+            };
+
+            // Collect updated data
+            colsToEdit.forEach(col => {
+                const inputElement = document.getElementById(`edit_${col}`);
+                if (inputElement) {
+                    updatedData[col] = inputElement.value;
+                }
+            });
+            
+            try {
+                const response = await fetch(`${BASE_URL}/${selectedId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+
+                if (!response.ok) throw new Error('수정 중 서버 오류가 발생했습니다.');
+
+                showMessage('ID ' + selectedId + ' 항목이 성공적으로 수정되었습니다.');
+                fetchData(currentPage); // 표 refresh
+
+            } catch (error) {
+                console.error('Update error:', error);
+                showMessage('수정 실패: ' + error.message, 'error');
+                fetchData(currentPage); // 오류 시 원래 상태로 복구
+            } finally {
+                // Restore button state
+                const completeButton = document.getElementById('editCompleteButton');
+                completeButton.textContent = '수정';
+                completeButton.id = 'editStartButton';
+                completeButton.className = 'edit-buttons';
+                document.getElementById('deleteButton').disabled = false;
+                isEditing = false;
+            }
+        }
+
+        // Initial Data Load (7. today - 3 day data)
+        fetchData(1);
     </script>
 </body>
 </html>
-
-
