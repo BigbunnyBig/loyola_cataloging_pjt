@@ -22,4 +22,4 @@ jobs:
         run: npm install
 
       - name: Run CloudService.js
-        run: node main/CloudService.js
+        run: node ./CloudService.js
