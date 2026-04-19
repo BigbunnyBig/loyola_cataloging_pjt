@@ -24,4 +24,4 @@ jobs:
         run: npm install -g @cloudtype/cli
 
       - name: Run CloudService.js
-        run: node ./main/CloudService.js
+        run: node ./CloudService.js
