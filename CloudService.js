@@ -13,7 +13,6 @@ const API_KEY = process.env.API_KEY;
 
 /**
  * 배포할 CloudType 프로젝트 이름을 여기에 입력하세요.
- * (예: 'my-awesome-project')
  */
 const PROJECT_NAME = 'loyola_pjt:main';
 
@@ -107,8 +106,17 @@ async function main() {
             console.log("\n[정보] SHOULD_APPLY가 false이므로 배포를 건너뜁니다.");
         }
 
-        // 4. 서비스 상태 확인 및 중지된 서비스 시작
+        // 4. 앱 서비스 상태 확인 및 중지된 서비스 시작
         await checkAndStartServices();
+
+        // 5. DB 서비스(postgresql) 강제 시작
+        console.log("\n▶ PostgreSQL 서비스 확인 및 시작");
+        try {
+            await runCtypeCommand('start postgresql');
+            console.log("✅ PostgreSQL 서비스가 시작되었습니다.");
+        } catch (err) {
+            console.error("❌ PostgreSQL 서비스 시작 실패:", err.message);
+        }
 
         console.log("\n✨ 전체 과정이 성공적으로 완료되었습니다. ✨");
 
