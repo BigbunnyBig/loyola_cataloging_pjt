@@ -1,4 +1,19 @@
-
+name: postgresql
+app: postgresql@16
+options:
+  rootusername: root
+  rootpassword: "7487"
+  database: database
+resources:
+  spot: true
+  cpu: 0
+  memory: 0.5
+  disk: 1
+  replicas: 1
+context:
+  preset: postgresql
+  git: {}
+---
 name: loyola-cataloging-pjt
 app: node@22
 options:
@@ -8,3 +23,7 @@ options:
   install: npm ci --production
   ports: 3000
   start: node main.js
+context:
+  git:
+    url: https://github.com/BigbunnyBig/loyola_cataloging_pjt
+    branch: main
