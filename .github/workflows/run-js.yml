@@ -25,3 +25,5 @@ jobs:
 
       - name: Run CloudService.js
         run: node ./CloudService.js
+        env:
+          API_KEY: ${{ secrets.CLOUDTYPE_API_KEY }}        
