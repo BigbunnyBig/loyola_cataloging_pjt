@@ -21,5 +21,5 @@ jobs:
       - name: Install deps (if needed)
         run: npm install
 
-      - name: Run script
-        run: node CloudService.js
+      - name: Run CloudService.js
+        run: node main/CloudService.js
