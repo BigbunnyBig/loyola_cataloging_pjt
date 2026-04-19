@@ -1,25 +1,27 @@
-name: Run JS Daily at 7AM KST
+name: Daily CloudService Run
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 한국 오전 7시 = UTC 전날 22시
+    - cron: '0 22 * * *'   # 한국시간 07:00
   workflow_dispatch:
 
 jobs:
-  run-script:
+  run-cloudservice:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install deps (if needed)
+      - name: Install Node dependencies
         run: npm install
 
+      - name: Install CloudType CLI
+        run: npm install -g @cloudtype/cli
+
       - name: Run CloudService.js
-        run: node ./CloudService.js
+        run: node ./main/CloudService.js
