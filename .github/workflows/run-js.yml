@@ -2,7 +2,7 @@ name: Daily CloudService Run
 
 on:
   schedule:
-    - cron: '0 22 * * *'   # 한국시간 07:00
+    - cron: '0 20 * * *'   # 한국시간 07:00
   workflow_dispatch:
 
 jobs:
